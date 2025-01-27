@@ -22,24 +22,19 @@ def assign_grade(marks):
 # Function to handle file uploads and process results
 def upload_and_display_results():
     st.header("Results")
-    st.subheader("Upload a text file with students' marks (Name and Marks)")
+    st.subheader("Upload an Excel file with students' marks (Name and Marks)")
 
-    # File uploader for .txt files
-    uploaded_file = st.file_uploader("Upload a .txt file (comma-separated or tab-separated)", type=["txt"], key="results")
+    # File uploader for Excel files
+    uploaded_file = st.file_uploader("Upload an Excel file (.xlsx or .xls)", type=["xlsx", "xls"], key="results")
 
     if uploaded_file:
         try:
-            # Read the file content into a DataFrame
-            # Handles both comma-separated and tab-separated files
-            df = pd.read_csv(uploaded_file, delimiter=",|\\t", engine="python")  # Regex to handle both separators
-
-            # Debugging: Show raw data
-            st.write("**Raw File Data:**")
-            st.text(uploaded_file.getvalue().decode("utf-8"))
+            # Read the Excel file into a DataFrame
+            df = pd.read_excel(uploaded_file)
 
             # Check for required columns
             if "Name" not in df.columns or "Marks" not in df.columns:
-                st.error("The file must have 'Name' and 'Marks' columns.")
+                st.error("The Excel file must have 'Name' and 'Marks' columns.")
                 return
 
             # Convert Marks to numeric and handle errors
