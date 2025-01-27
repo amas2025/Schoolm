@@ -19,7 +19,6 @@ def assign_grade(marks):
     else:
         return "Invalid Marks"
 
-# Section: Posts
 def display_posts():
     st.header("Posts")
     st.subheader("This is the Posts section.")
@@ -34,7 +33,10 @@ def display_posts():
     if st.button("Submit Post"):
         if new_post.strip():
             # Add the post to session state
-            st.session_state.posts.append({"content": new_post.strip(), "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+            st.session_state.posts.append({
+                "content": new_post.strip(),
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            })
             st.success("Your post has been submitted!")
         else:
             st.error("Post cannot be empty!")
@@ -52,13 +54,14 @@ def display_posts():
                 box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
                 margin-bottom: 10px;">
                 <p style="font-size: 16px; color: #333; line-height: 1.6;">
-                    {st.markdown(post['content'])}
+                    {post['content']}
                 </p>
                 <p style="font-size: 12px; color: #666; text-align: right;">
                     Posted on: {post['timestamp']}
                 </p>
             </div>
             """, unsafe_allow_html=True)
+
 
 
 # Section: Announcements
