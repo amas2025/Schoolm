@@ -24,15 +24,12 @@ def display_posts():
     st.header("📜 Posts")
     st.write("Share and view posts below:")
 
-    # Initialize session state for posts
     if "posts" not in st.session_state:
         st.session_state.posts = []
 
-    # Input for new post
     new_post = st.text_area("Write a new post:")
     if st.button("Submit Post"):
         if new_post.strip():
-            # Add the post to session state
             st.session_state.posts.append({
                 "content": new_post.strip(),
                 "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -41,10 +38,9 @@ def display_posts():
         else:
             st.error("Post cannot be empty!")
 
-    # Display submitted posts
     if st.session_state.posts:
         st.write("### Recent Posts")
-        for post in reversed(st.session_state.posts):  # Display most recent posts first
+        for post in reversed(st.session_state.posts):
             st.markdown(f"""
             <div style="
                 background-color: #f9f9f9; 
@@ -66,15 +62,12 @@ def display_announcements():
     st.header("📢 Announcements")
     st.write("Share and view announcements below:")
 
-    # Initialize session state for announcements
     if "announcements" not in st.session_state:
         st.session_state.announcements = []
 
-    # Input for new announcement
     new_announcement = st.text_area("Write a new announcement:")
     if st.button("Submit Announcement"):
         if new_announcement.strip():
-            # Add the announcement to session state
             st.session_state.announcements.append({
                 "content": new_announcement.strip(),
                 "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -83,10 +76,9 @@ def display_announcements():
         else:
             st.error("Announcement cannot be empty!")
 
-    # Display submitted announcements
     if st.session_state.announcements:
         st.write("### Recent Announcements")
-        for announcement in reversed(st.session_state.announcements):  # Display most recent announcements first
+        for announcement in reversed(st.session_state.announcements):
             st.markdown(f"""
             <div style="
                 background-color: #f1f1f1; 
@@ -142,16 +134,13 @@ def display_results():
         try:
             df = pd.read_excel(uploaded_file)
 
-            # Validate required columns
             if "Name" not in df.columns or "Marks" not in df.columns:
                 st.error("The Excel file must contain 'Name' and 'Marks' columns.")
                 return
 
-            # Assign grades
             df["Marks"] = pd.to_numeric(df["Marks"], errors="coerce")
             df["Grade"] = df["Marks"].apply(assign_grade)
 
-            # Display results table
             st.write("### Processed Results Table")
             st.dataframe(df.style.applymap(
                 lambda x: "color: red;" if x == "Failed" else "", subset=["Grade"]
@@ -161,22 +150,44 @@ def display_results():
             st.error("An error occurred while processing the file.")
             st.exception(e)
 
+# Enhanced Navigation Bar
+def enhanced_navigation():
+    st.sidebar.markdown("""
+        <div style="
+            background-color: #f9f9f9; 
+            padding: 15px; 
+            border-radius: 10px; 
+            border: 1px solid #ddd;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+            <h4 style="text-align: center;">📚 Navigation</h4>
+        </div>
+        <br/>
+    """, unsafe_allow_html=True)
+
+    # Enhanced Sidebar Navigation
+    menu = st.sidebar.radio(
+        "Select a Section",
+        ["📜 Posts", "📢 Announcements", "📂 Homework", "📅 Exam Schedule", "📊 Results"],
+        label_visibility="hidden"
+    )
+    return menu
+
 # Main function to handle navigation
 def main():
     st.title("🏫 School App")
 
-    # Sidebar navigation
-    menu = st.sidebar.radio("Navigate", ["Posts", "Announcements", "Homework", "Exam Schedule", "Results"])
+    # Enhanced navigation
+    menu = enhanced_navigation()
 
-    if menu == "Posts":
+    if "Posts" in menu:
         display_posts()
-    elif menu == "Announcements":
+    elif "Announcements" in menu:
         display_announcements()
-    elif menu == "Homework":
+    elif "Homework" in menu:
         display_homework()
-    elif menu == "Exam Schedule":
+    elif "Exam Schedule" in menu:
         display_exam_schedule()
-    elif menu == "Results":
+    elif "Results" in menu:
         display_results()
 
 if __name__ == "__main__":
