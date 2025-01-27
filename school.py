@@ -11,12 +11,12 @@ def authenticate():
     st.write("Please enter the access key to continue:")
     user_key = st.text_input("Access Key", type="password")
 
-    # Authenticate on form submission
-    if user_key == ACCESS_KEY:
-        st.session_state["authenticated"] = True
-        st.success("Access granted! Redirecting to the app...")
-    elif user_key and user_key != ACCESS_KEY:
-        st.error("Invalid access key. Please try again.")
+    if st.button("Submit"):
+        if user_key == ACCESS_KEY:
+            st.session_state["authenticated"] = True
+            st.success("Access granted! Redirecting to the app...")
+        else:
+            st.error("Invalid access key. Please try again.")
 
 # Section: Posts
 def display_posts():
