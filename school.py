@@ -23,21 +23,83 @@ def assign_grade(marks):
 def display_posts():
     st.header("Posts")
     st.subheader("This is the Posts section.")
-    st.write("Here you can view or manage posts from the school.")
-    # Add functionality for posts (e.g., creating or displaying posts)
-    st.text_area("Write a new post:")
+    st.write("Submit and view posts below.")
+
+    # Initialize session state for posts
+    if "posts" not in st.session_state:
+        st.session_state.posts = []
+
+    # Input for new post
+    new_post = st.text_area("Write a new post:")
     if st.button("Submit Post"):
-        st.success("Your post has been submitted!")
+        if new_post.strip():
+            # Add the post to session state
+            st.session_state.posts.append({"content": new_post, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+            st.success("Your post has been submitted!")
+        else:
+            st.error("Post cannot be empty!")
+
+    # Display submitted posts
+    if st.session_state.posts:
+        st.write("### Recent Posts:")
+        for post in reversed(st.session_state.posts):  # Display most recent posts first
+            st.markdown(f"""
+            <div style="
+                background-color: #f9f9f9; 
+                padding: 15px; 
+                border-radius: 10px; 
+                border: 1px solid #ddd;
+                box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+                margin-bottom: 10px;">
+                <p style="font-size: 16px; color: #333; line-height: 1.6;">
+                    {post['content']}
+                </p>
+                <p style="font-size: 12px; color: #666; text-align: right;">
+                    Posted on: {post['timestamp']}
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
 
 # Section: Announcements
 def display_announcements():
     st.header("Announcements")
     st.subheader("This is the Announcements section.")
-    st.write("Here you can view or manage school announcements.")
-    # Add functionality for announcements (e.g., displaying announcements)
-    st.text_area("Write a new announcement:")
+    st.write("Submit and view announcements below.")
+
+    # Initialize session state for announcements
+    if "announcements" not in st.session_state:
+        st.session_state.announcements = []
+
+    # Input for new announcement
+    new_announcement = st.text_area("Write a new announcement:")
     if st.button("Submit Announcement"):
-        st.success("Your announcement has been submitted!")
+        if new_announcement.strip():
+            # Add the announcement to session state
+            st.session_state.announcements.append({"content": new_announcement, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+            st.success("Your announcement has been submitted!")
+        else:
+            st.error("Announcement cannot be empty!")
+
+    # Display submitted announcements
+    if st.session_state.announcements:
+        st.write("### Recent Announcements:")
+        for announcement in reversed(st.session_state.announcements):  # Display most recent announcements first
+            st.markdown(f"""
+            <div style="
+                background-color: #f1f1f1; 
+                padding: 15px; 
+                border-radius: 10px; 
+                border: 1px solid #ccc;
+                box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+                margin-bottom: 10px;">
+                <p style="font-size: 16px; color: #333; line-height: 1.6;">
+                    {announcement['content']}
+                </p>
+                <p style="font-size: 12px; color: #666; text-align: right;">
+                    Announced on: {announcement['timestamp']}
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
 
 # Section: Homework
 def display_homework():
