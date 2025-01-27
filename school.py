@@ -1,7 +1,61 @@
 import streamlit as st
+import pandas as pd
 from datetime import datetime
 
-# Function to handle file uploads, display content as a post, and add reactions
+# Function to assign grades based on marks
+def assign_grade(marks):
+    if marks < 50:
+        return "Failed"
+    elif 50 <= marks < 60:
+        return "C"
+    elif 60 <= marks < 70:
+        return "B"
+    elif 70 <= marks < 80:
+        return "B+"
+    elif 80 <= marks < 90:
+        return "A"
+    elif 90 <= marks <= 100:
+        return "A+"
+    else:
+        return "Invalid Marks"
+
+# Enhanced function to handle Excel uploads in Results section
+def upload_and_display_results():
+    if "uploaded_files" not in st.session_state:
+        st.session_state.uploaded_files = {}
+
+    st.subheader("Upload an Excel file for Results (Name and Marks required)")
+    uploaded_file = st.file_uploader("Upload an Excel file (.xlsx or .xls)", type=["xlsx", "xls"], key="results")
+
+    if uploaded_file:
+        try:
+            # Read Excel file
+            df = pd.read_excel(uploaded_file)
+
+            # Check for required columns
+            if "Name" not in df.columns or "Marks" not in df.columns:
+                st.error("The Excel file must contain 'Name' and 'Marks' columns.")
+                return
+
+            # Process marks and assign grades
+            df["Marks"] = pd.to_numeric(df["Marks"], errors="coerce")
+            df["Grade"] = df["Marks"].apply(assign_grade)
+
+            # Save uploaded file to session state
+            st.session_state.uploaded_files["Results"] = df
+
+            st.success("File uploaded and processed successfully!")
+
+            # Display the processed table with grades
+            st.write("**Student Results Table:**")
+            st.dataframe(
+                df.style.applymap(lambda x: "color: red;" if x == "Failed" else "", subset=["Grade"])
+            )
+
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
+
+# Generic function to handle file uploads for other menu items
 def upload_and_display_file_as_post_with_reaction(menu_key):
     if "uploaded_files" not in st.session_state:
         st.session_state.uploaded_files = {}
@@ -67,7 +121,7 @@ def display_exam_schedule():
 
 def display_results():
     st.header('Results')
-    upload_and_display_file_as_post_with_reaction('Results')
+    upload_and_display_results()
 
 # Main function
 def main():
