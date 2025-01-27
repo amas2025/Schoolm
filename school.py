@@ -25,13 +25,17 @@ def upload_and_display_results():
     st.subheader("Upload a text file with students' marks (Name and Marks)")
 
     # File uploader for .txt files
-    uploaded_file = st.file_uploader("Upload a .txt file", type=["txt"], key="results")
+    uploaded_file = st.file_uploader("Upload a .txt file (comma-separated or tab-separated)", type=["txt"], key="results")
 
     if uploaded_file:
         try:
             # Read the file content into a DataFrame
-            # Assuming the .txt file is comma-separated or tab-separated
-            df = pd.read_csv(uploaded_file, delimiter=",|\\t", engine="python")  # Handles both comma and tab separators
+            # Handles both comma-separated and tab-separated files
+            df = pd.read_csv(uploaded_file, delimiter=",|\\t", engine="python")  # Regex to handle both separators
+
+            # Debugging: Show raw data
+            st.write("**Raw File Data:**")
+            st.text(uploaded_file.getvalue().decode("utf-8"))
 
             # Check for required columns
             if "Name" not in df.columns or "Marks" not in df.columns:
@@ -51,6 +55,7 @@ def upload_and_display_results():
 
         except Exception as e:
             st.error(f"An error occurred while processing the file: {e}")
+            st.exception(e)
 
 # Other menu handlers
 def display_posts():
