@@ -1,34 +1,46 @@
 import streamlit as st
 
-# Set the title of the web app
-st.title('School App')
-
-# Create a sidebar for the menu
-menu = st.sidebar.selectbox('Menu', ['Posts', 'Announcements', 'Homework', 'Exam Schedule', 'Results'])
-
-# Define the content for each menu option
-if menu == 'Posts':
+# Define individual functions for each menu option
+def display_posts():
     st.header('Posts')
     st.write('Here you can find the latest posts from the school.')
 
-elif menu == 'Announcements':
+def display_announcements():
     st.header('Announcements')
     st.write('Here you can find the latest announcements from the school.')
 
-elif menu == 'Homework':
+def display_homework():
     st.header('Homework')
     st.write('Here you can find the homework assignments.')
 
-elif menu == 'Exam Schedule':
+def display_exam_schedule():
     st.header('Exam Schedule')
     st.write('Here you can find the exam schedule.')
 
-elif menu == 'Results':
+def display_results():
     st.header('Results')
     st.write('Here you can find the exam results.')
 
-# Example placeholders for content
-# You can replace these with actual data retrieval and display logic
-st.write('This is a placeholder for content. Replace it with your actual content.')
+# Main function
+def main():
+    # Set the title of the web app
+    st.title('School App')
 
-# Run the app with: streamlit run <script_name>.py
+    # Create a sidebar for the menu
+    menu = st.sidebar.selectbox('Menu', ['Posts', 'Announcements', 'Homework', 'Exam Schedule', 'Results'])
+
+    # Display the content based on menu selection
+    if menu == 'Posts':
+        display_posts()
+    elif menu == 'Announcements':
+        display_announcements()
+    elif menu == 'Homework':
+        display_homework()
+    elif menu == 'Exam Schedule':
+        display_exam_schedule()
+    elif menu == 'Results':
+        display_results()
+
+# Run the main function
+if __name__ == '__main__':
+    main()
