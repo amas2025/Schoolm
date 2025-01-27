@@ -152,31 +152,22 @@ def display_results():
 
 # Enhanced Navigation Bar
 def enhanced_navigation():
-    st.sidebar.markdown("""
-        <div style="
-            background-color: #f9f9f9; 
-            padding: 15px; 
-            border-radius: 10px; 
-            border: 1px solid #ddd;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
-            <h4 style="text-align: center;">📚 Navigation</h4>
-        </div>
-        <br/>
-    """, unsafe_allow_html=True)
+    # Sidebar Header
+    st.sidebar.markdown("<h4 style='text-align: center; margin-bottom: 20px;'>📚 Navigation</h4>", unsafe_allow_html=True)
 
-    # Enhanced Sidebar Navigation
+    # Sidebar Navigation Menu
     menu = st.sidebar.radio(
-        "Select a Section",
+        "Navigate to",
         ["📜 Posts", "📢 Announcements", "📂 Homework", "📅 Exam Schedule", "📊 Results"],
-        label_visibility="hidden"
+        label_visibility="collapsed"
     )
     return menu
 
-# Main function to handle navigation
+# Main function
 def main():
     st.title("🏫 School App")
 
-    # Enhanced navigation
+    # Enhanced Navigation
     menu = enhanced_navigation()
 
     if "Posts" in menu:
