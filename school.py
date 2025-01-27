@@ -1,25 +1,49 @@
 import streamlit as st
 
+# Function to handle file uploads and display uploaded files
+def upload_and_display_file(menu_key):
+    # Use session state to store uploaded files for each menu
+    if "uploaded_files" not in st.session_state:
+        st.session_state.uploaded_files = {}
+
+    st.write(f"Upload files for {menu_key}")
+    
+    # File uploader
+    uploaded_file = st.file_uploader(f"Upload a file for {menu_key}", key=menu_key)
+    
+    if uploaded_file:
+        # Save the uploaded file in session state under the current menu key
+        st.session_state.uploaded_files[menu_key] = uploaded_file
+        st.success(f"File '{uploaded_file.name}' uploaded successfully!")
+    
+    # Show uploaded file if available
+    if menu_key in st.session_state.uploaded_files:
+        st.write("Uploaded File:")
+        uploaded_file = st.session_state.uploaded_files[menu_key]
+        st.write(f"Filename: {uploaded_file.name}")
+        st.write("File Content:")
+        st.write(uploaded_file.getvalue().decode("utf-8"))  # Assuming text file. For other formats, handle appropriately.
+
 # Define individual functions for each menu option
 def display_posts():
     st.header('Posts')
-    st.write('Here you can find the latest posts from the school.')
+    upload_and_display_file('Posts')
 
 def display_announcements():
     st.header('Announcements')
-    st.write('Here you can find the latest announcements from the school.')
+    upload_and_display_file('Announcements')
 
 def display_homework():
     st.header('Homework')
-    st.write('Here you can find the homework assignments.')
+    upload_and_display_file('Homework')
 
 def display_exam_schedule():
     st.header('Exam Schedule')
-    st.write('Here you can find the exam schedule.')
+    upload_and_display_file('Exam Schedule')
 
 def display_results():
     st.header('Results')
-    st.write('Here you can find the exam results.')
+    upload_and_display_file('Results')
 
 # Main function
 def main():
