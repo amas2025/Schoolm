@@ -1,7 +1,75 @@
 import streamlit as st
+import pandas as pd
 from datetime import datetime
 
-# Function to handle file uploads, display content as a post, and add reactions
+# Function to assign grades based on marks
+def assign_grade(marks):
+    if marks < 50:
+        return "Failed"
+    elif 50 <= marks < 60:
+        return "C"
+    elif 60 <= marks < 70:
+        return "B"
+    elif 70 <= marks < 80:
+        return "B+"
+    elif 80 <= marks < 90:
+        return "A"
+    elif 90 <= marks <= 100:
+        return "A+"
+    else:
+        return "Invalid Marks"
+
+# Function to handle file uploads and process results
+def upload_and_display_results():
+    st.header("Results")
+    st.subheader("Upload a text file with students' marks (Name and Marks)")
+
+    # File uploader for .txt files
+    uploaded_file = st.file_uploader("Upload a .txt file", type=["txt"], key="results")
+
+    if uploaded_file:
+        try:
+            # Read the file content into a DataFrame
+            # Assuming the .txt file is comma-separated or tab-separated
+            df = pd.read_csv(uploaded_file, delimiter=",|\\t", engine="python")  # Handles both comma and tab separators
+
+            # Check for required columns
+            if "Name" not in df.columns or "Marks" not in df.columns:
+                st.error("The file must have 'Name' and 'Marks' columns.")
+                return
+
+            # Convert Marks to numeric and handle errors
+            df["Marks"] = pd.to_numeric(df["Marks"], errors="coerce")
+            df["Grade"] = df["Marks"].apply(assign_grade)  # Apply grade classification
+
+            # Display the DataFrame as an advanced table
+            st.write("**Student Results Table**")
+            st.dataframe(df.style.applymap(
+                lambda x: "color: red;" if x == "Failed" else "",
+                subset=["Grade"]
+            ))
+
+        except Exception as e:
+            st.error(f"An error occurred while processing the file: {e}")
+
+# Other menu handlers
+def display_posts():
+    st.header('Posts')
+    upload_and_display_file_as_post_with_reaction('Posts')
+
+def display_announcements():
+    st.header('Announcements')
+    upload_and_display_file_as_post_with_reaction('Announcements')
+
+def display_homework():
+    st.header('Homework')
+    upload_and_display_file_as_post_with_reaction('Homework')
+
+def display_exam_schedule():
+    st.header('Exam Schedule')
+    upload_and_display_file_as_post_with_reaction('Exam Schedule')
+
+# Helper function to handle generic uploads
 def upload_and_display_file_as_post_with_reaction(menu_key):
     if "uploaded_files" not in st.session_state:
         st.session_state.uploaded_files = {}
@@ -48,27 +116,6 @@ def upload_and_display_file_as_post_with_reaction(menu_key):
         with col2:
             st.write(f"{st.session_state.reactions[menu_key]} Reactions")
 
-# Menu handlers
-def display_posts():
-    st.header('Posts')
-    upload_and_display_file_as_post_with_reaction('Posts')
-
-def display_announcements():
-    st.header('Announcements')
-    upload_and_display_file_as_post_with_reaction('Announcements')
-
-def display_homework():
-    st.header('Homework')
-    upload_and_display_file_as_post_with_reaction('Homework')
-
-def display_exam_schedule():
-    st.header('Exam Schedule')
-    upload_and_display_file_as_post_with_reaction('Exam Schedule')
-
-def display_results():
-    st.header('Results')
-    upload_and_display_file_as_post_with_reaction('Results')
-
 # Main function
 def main():
     st.title('School App')
@@ -83,7 +130,7 @@ def main():
     if st.sidebar.button('Exam Schedule'):
         display_exam_schedule()
     if st.sidebar.button('Results'):
-        display_results()
+        upload_and_display_results()
 
 if __name__ == '__main__':
     main()
