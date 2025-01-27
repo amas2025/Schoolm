@@ -29,8 +29,17 @@ def upload_and_display_results():
 
     if uploaded_file:
         try:
+            # Debug: Display file details
+            st.write("**Uploaded File Details:**")
+            st.write(f"File Name: {uploaded_file.name}")
+            st.write(f"File Type: {uploaded_file.type}")
+            
             # Read the Excel file into a DataFrame
             df = pd.read_excel(uploaded_file)
+
+            # Debug: Display raw DataFrame
+            st.write("**Raw Data:**")
+            st.dataframe(df)
 
             # Check for required columns
             if "Name" not in df.columns or "Marks" not in df.columns:
@@ -42,93 +51,22 @@ def upload_and_display_results():
             df["Grade"] = df["Marks"].apply(assign_grade)  # Apply grade classification
 
             # Display the DataFrame as an advanced table
-            st.write("**Student Results Table**")
+            st.write("**Student Results Table:**")
             st.dataframe(df.style.applymap(
                 lambda x: "color: red;" if x == "Failed" else "",
                 subset=["Grade"]
             ))
 
         except Exception as e:
-            st.error(f"An error occurred while processing the file: {e}")
+            # Display error message and exception details
+            st.error("An error occurred while processing the file.")
             st.exception(e)
-
-# Other menu handlers
-def display_posts():
-    st.header('Posts')
-    upload_and_display_file_as_post_with_reaction('Posts')
-
-def display_announcements():
-    st.header('Announcements')
-    upload_and_display_file_as_post_with_reaction('Announcements')
-
-def display_homework():
-    st.header('Homework')
-    upload_and_display_file_as_post_with_reaction('Homework')
-
-def display_exam_schedule():
-    st.header('Exam Schedule')
-    upload_and_display_file_as_post_with_reaction('Exam Schedule')
-
-# Helper function to handle generic uploads
-def upload_and_display_file_as_post_with_reaction(menu_key):
-    if "uploaded_files" not in st.session_state:
-        st.session_state.uploaded_files = {}
-    if "reactions" not in st.session_state:
-        st.session_state.reactions = {}
-
-    st.subheader(f"Upload a file for {menu_key}")
-    uploaded_file = st.file_uploader(f"Upload a file for {menu_key}", key=menu_key)
-    
-    if uploaded_file:
-        st.session_state.uploaded_files[menu_key] = {
-            "file": uploaded_file,
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        }
-        st.session_state.reactions[menu_key] = 0
-        st.success(f"File for {menu_key} uploaded successfully!")
-
-    if menu_key in st.session_state.uploaded_files:
-        uploaded_data = st.session_state.uploaded_files[menu_key]
-        file_content = uploaded_data["file"].getvalue().decode("utf-8")
-        timestamp = uploaded_data["timestamp"]
-
-        st.markdown(f"""
-        <div style="
-            background-color: #f9f9f9; 
-            padding: 15px; 
-            border-radius: 10px; 
-            border: 1px solid #ddd;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);">
-            <p style="font-size: 16px; color: #333; line-height: 1.6;">
-                {file_content}
-            </p>
-            <p style="font-size: 12px; color: #666; text-align: right;">
-                Uploaded on: {timestamp}
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        col1, col2 = st.columns([0.1, 0.9])
-        with col1:
-            if st.button("❤️", key=f"heart_{menu_key}"):
-                st.session_state.reactions[menu_key] += 1
-
-        with col2:
-            st.write(f"{st.session_state.reactions[menu_key]} Reactions")
 
 # Main function
 def main():
     st.title('School App')
 
     # Sidebar menu buttons
-    if st.sidebar.button('Posts'):
-        display_posts()
-    if st.sidebar.button('Announcements'):
-        display_announcements()
-    if st.sidebar.button('Homework'):
-        display_homework()
-    if st.sidebar.button('Exam Schedule'):
-        display_exam_schedule()
     if st.sidebar.button('Results'):
         upload_and_display_results()
 
